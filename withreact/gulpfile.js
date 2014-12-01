@@ -1,16 +1,19 @@
 var gulp = require("gulp");
 var less = require('gulp-less');
-var browserify = require("gulp-browserify");
-var concat = require("gulp-concat");
+var browserify = require("browserify");
+var reactify = require("reactify");
+var source = require("vinyl-source-stream");
 
 // Specify the browserify task, which bundles all needed code into a single
 // javascript file for easy inclusion into HTML files.
 gulp.task("browserify",function() {
-  gulp.src("src/js/main.js")
-      .pipe(browserify({ transform: "reactify" })).on("prebundle", function(bundle) {
-        bundle.require("react");
-      })
-      .pipe(concat("main.js"))
+  var b = browserify();
+  b.transform(reactify);
+  b.require("react");
+  b.add("./src/js/main.js");
+
+  return b.bundle()
+      .pipe(source("main.js"))
       .pipe(gulp.dest("dist/js"));
 });
 
