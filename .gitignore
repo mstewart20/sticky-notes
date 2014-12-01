@@ -1,0 +1,8 @@
+# Any IDEA project files
+.idea/
+
+# Node modules
+node_modules/
+
+# Any dist files created buy the build
+dist/
