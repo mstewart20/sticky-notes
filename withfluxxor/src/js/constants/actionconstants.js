@@ -1,0 +1,11 @@
+var ActionConstants = {
+
+  ADD_NOTE: "ADD_NOTE",
+  START_NOTE_DRAG: "START_NOTE_DRAG",
+  STOP_NOTE_DRAG: "STOP_NOTE_DRAG",
+  MOVE_NOTE: "MOVE_NOTE",
+  HIGHLIGHT_NOTE: "HIGHLIGHT_NOTE",
+  UNHIGHLIGHT_NOTE: "UNHIGHLIGHT_NOTE"
+};
+
+module.exports = ActionConstants;

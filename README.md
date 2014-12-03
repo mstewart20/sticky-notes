@@ -34,3 +34,18 @@ gulp
 
 This will produce a `dist` folder with an index.html, open this in a browser to play with sticky-notes!
 
+# withfluxxor
+
+The withfluxxor project contains a React and Fluxxor implementation of sticky-notes including an additional
+feature to show the potential benefits of a Flux architecture.
+
+## Building
+
+Within the `withfluxxor` folder, run the following
+
+```
+npm install
+gulp
+```
+
+This will produce a `dist` folder with an index.html, open this in a browser to play with sticky-notes 2.0!

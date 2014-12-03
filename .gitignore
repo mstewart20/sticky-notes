@@ -4,5 +4,5 @@
 # Node modules
 node_modules/
 
-# Any dist files created buy the build
+# Any dist files created by the build
 dist/

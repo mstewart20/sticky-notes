@@ -1,10 +1,16 @@
 /** @jsx React.DOM */
 var React = require("react");
+var Fluxxor = require("fluxxor");
+var FluxMixin = Fluxxor.FluxMixin(React);
+var StoreWatchMixin = Fluxxor.StoreWatchMixin;
+
 var mui = require("material-ui");
 var Dialog = mui.Dialog;
 var Input = mui.Input;
+var Paper = mui.Paper;
 
 var Note = require("./note");
+var NoteList = require("./notelist");
 
 /**
  * The Board component does the following:
@@ -15,36 +21,19 @@ var Note = require("./note");
  */
 var Board = React.createClass({
 
-  getRandomColor: function() {
-    var colors = ["yellow", "green", "blue", "pink"];
-    return colors[Math.floor(Math.random() * 4)];
-  },
+  mixins: [FluxMixin, StoreWatchMixin("NotesStore")],
 
   addNote: function() {
-    var color = this.getRandomColor();
+    this.getFlux().actions.notes.addNote(
+        this.state.addNoteX - 100,
+        this.state.addNoteY - 75,
+        this.state.addTitle,
+        this.state.addContent);
 
-    //Create a note and add it to the notes Array
-    var notes = this.state.notes;
-
-    notes.push({
-      id: this.state.nextNoteId,
-      title: this.state.addTitle,
-      content: this.state.addContent,
-      initialX: this.state.addNoteX - 100,
-      initialY: this.state.addNoteY - 75,
-      color: color
-    });
-
-    //Set the state to the new notes array, triggering re-render
-    this.setState({
-      notes: notes,
-      nextNoteId: this.state.nextNoteId + 1
-    });
 
     //Dismiss the dialog
     this.refs.addNoteDialog.dismiss();
   },
-
 
   showNoteDialog: function(e) {
     //Capture the current x/y coordinates of the mouse click
@@ -55,33 +44,6 @@ var Board = React.createClass({
 
     //Use a ref variable to display the note dialog
     this.refs.addNoteDialog.show();
-  },
-
-  focusNote: function(noteId) {
-    //Called when a note is dragged, need to find and re-order the note
-    //so it is rendered "on top" of other notes.
-    var index = -1;
-
-    //Find the note by ID
-    for( var i = 0; i < this.state.notes.length; i++ ) {
-      var note = this.state.notes[i];
-      if( note.id === noteId ) {
-        index = i;
-      }
-    }
-
-    //Remove the note and add it to the end
-    //HTML rendering will then render this last, i.e. "on top"
-    if( index >= 0 ) {
-      var notes = this.state.notes;
-      var note = notes.splice(index, 1);
-
-      notes.push(note[0]);
-
-      this.setState({
-        notes: notes
-      })
-    }
   },
 
   setTitle: function(e, value) {
@@ -98,17 +60,14 @@ var Board = React.createClass({
     })
   },
 
-  getInitialState: function() {
-    //Set the initial state to an empty array with a next node id of 0.
-    return {
-      notes: [],
-      nextNoteId: 0
-    }
+  getStateFromFlux: function() {
+    return this.getFlux().store("NotesStore").getState();
   },
 
   render: function() {
     var noteDivs = null;
     var noteDialog = null;
+    var noteList = null;
 
     //Dialog actions
     var actions = [
@@ -126,11 +85,15 @@ var Board = React.createClass({
       noteDivs = this.state.notes.map(function (note, index) {
         return (<Note key={note.id} note={note} focusNote={this.focusNote}/>)
       }, this)
+
+      noteList = <NoteList notes={this.state.notes}/>
     }
 
     //Return the HTML for our board, which has our main div, all the "Note" component HTMLs and the Dialog HTML
     return (
       <div id="board" className="board" onDoubleClick={this.showNoteDialog}>
+
+        {noteList}
         {noteDivs}
 
         <Dialog ref="addNoteDialog" title="Add Note" actions={actions}>
