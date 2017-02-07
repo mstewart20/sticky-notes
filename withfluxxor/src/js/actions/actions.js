@@ -1,8 +1,8 @@
-var ActionConstants = require("../constants/actionconstants");
+import ActionConstants from "../constants/actionconstants";
 
-var Actions = {
+const Actions = {
   notes: {
-    addNote: function(x, y, title, content) {
+    addNote(x, y, title, content) {
       this.dispatch(ActionConstants.ADD_NOTE, {
         x: x,
         y: y,
@@ -11,7 +11,7 @@ var Actions = {
       })
     },
 
-    startNoteDrag: function(id, x, y) {
+    startNoteDrag(id, x, y) {
       this.dispatch(ActionConstants.START_NOTE_DRAG, {
         id: id,
         x: x,
@@ -19,13 +19,13 @@ var Actions = {
       })
     },
 
-    stopNoteDrag: function(id) {
+    stopNoteDrag(id) {
       this.dispatch(ActionConstants.STOP_NOTE_DRAG, {
         id: id
       })
     },
 
-    moveNote: function(id, x, y) {
+    moveNote(id, x, y) {
       this.dispatch(ActionConstants.MOVE_NOTE, {
         id: id,
         x: x,
@@ -33,13 +33,13 @@ var Actions = {
       })
     },
 
-    highlightNote: function(id) {
+    highlightNote(id) {
       this.dispatch(ActionConstants.HIGHLIGHT_NOTE, {
         id: id
       })
     },
 
-    unhighlightNote: function(id) {
+    unhighlightNote(id) {
       this.dispatch(ActionConstants.UNHIGHLIGHT_NOTE, {
         id: id
       })

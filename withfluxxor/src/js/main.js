@@ -1,22 +1,34 @@
-/** @jsx React.DOM */
-var Board = require("./components/board");
-var React = require("react");
-var Fluxxor = require("fluxxor");
+import React from "react";
+import ReactDOM from "react-dom";
+
+import Fluxxor from "fluxxor";
+import injectTapEventPlugin from 'react-tap-event-plugin';
+import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
+
+// Needed for onTouchTap
+// http://stackoverflow.com/a/34015469/988941
+injectTapEventPlugin();
 
 //Initiate fluxxor
-var NotesStore = require("./stores/notesstore");
+import Board from "./components/board";
+import NotesStore from "./stores/notesstore";
+import actions from "./actions/actions";
 
-var actions = require("./actions/actions");
-var stores = {
+const stores = {
   NotesStore: new NotesStore()
 };
 
-var flux = new Fluxxor.Flux(stores, actions);
+const flux = new Fluxxor.Flux(stores, actions);
+
+const App = () => (
+  <MuiThemeProvider>
+    <Board flux={flux}/>
+  </MuiThemeProvider>
+);
+
 
 //Use the main React.render method to render our Board component
 //onto the HTML specified by the "main" element id.
-React.render(
-    <Board flux={flux}/>,
+ReactDOM.render(
+    <App />,
     document.getElementById("main"));
-
-

@@ -1,9 +1,12 @@
-var ActionConstants = require("../constants/actionconstants");
-var Fluxxor = require("fluxxor");
-var lodash = require("lodash");
+import ActionConstants from "../constants/actionconstants";
+import Fluxxor from "fluxxor";
+import lodash from "lodash";
 
-var NotesStore = Fluxxor.createStore({
-  initialize: function() {
+//Define some colors for our notes
+const COLORS = ["#FCF997", "#96FFA0", "#9BF8FF", "#FFC1C5"];
+
+const NotesStore = Fluxxor.createStore({
+  initialize() {
     this.notes = [];
     this.nextNodeId = 1;
 
@@ -17,18 +20,17 @@ var NotesStore = Fluxxor.createStore({
     );
   },
 
-  getState: function() {
+  getState() {
     return {
       notes: lodash.cloneDeep(this.notes)
     };
   },
 
-  _getRandomColor: function() {
-    var colors = ["yellow", "green", "blue", "pink"];
-    return colors[Math.floor(Math.random() * 4)];
+  _getRandomColor() {
+    return COLORS[Math.floor(Math.random() * 4)];
   },
 
-  _findNoteIndex: function(id) {
+  _findNoteIndex(id) {
     for( var i = 0; i < this.notes.length; i++ ) {
       if( this.notes[i].id === id ) {
         return i;
@@ -38,7 +40,7 @@ var NotesStore = Fluxxor.createStore({
     return null;
   },
 
-  onAddNote: function(payload) {
+  onAddNote(payload) {
     this.notes.push({
       id: this.nextNodeId,
       x: payload.x,
@@ -57,7 +59,7 @@ var NotesStore = Fluxxor.createStore({
 
 
 
-  onStartNoteDrag: function(payload) {
+  onStartNoteDrag(payload) {
     var noteIndex = this._findNoteIndex(payload.id);
 
     if( noteIndex >= 0 ) {
@@ -77,7 +79,7 @@ var NotesStore = Fluxxor.createStore({
     }
   },
 
-  onStopNoteDrag: function(payload) {
+  onStopNoteDrag(payload) {
     var noteIndex = this._findNoteIndex(payload.id);
 
 
@@ -89,7 +91,7 @@ var NotesStore = Fluxxor.createStore({
     }
   },
 
-  onMoveNote: function(payload) {
+  onMoveNote(payload) {
     var noteIndex = this._findNoteIndex(payload.id);
 
     if( noteIndex >= 0 ) {
@@ -103,7 +105,7 @@ var NotesStore = Fluxxor.createStore({
     }
   },
 
-  onHighlightNote: function(payload) {
+  onHighlightNote(payload) {
     var noteIndex = this._findNoteIndex(payload.id);
 
     if( noteIndex >= 0 ) {
@@ -114,7 +116,7 @@ var NotesStore = Fluxxor.createStore({
     }
   },
 
-  onUnhighlightNote: function(payload) {
+  onUnhighlightNote(payload) {
     var noteIndex = this._findNoteIndex(payload.id);
 
     if( noteIndex >= 0 ) {

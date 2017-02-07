@@ -1,16 +1,15 @@
-/** @jsx React.DOM */
-var React = require("react");
-var Fluxxor = require("fluxxor");
-var FluxMixin = Fluxxor.FluxMixin(React);
-var StoreWatchMixin = Fluxxor.StoreWatchMixin;
+import React from "react";
+import Fluxxor from "fluxxor";
+const FluxMixin = Fluxxor.FluxMixin(React);
+const StoreWatchMixin = Fluxxor.StoreWatchMixin;
 
-var mui = require("material-ui");
-var Dialog = mui.Dialog;
-var Input = mui.Input;
-var Paper = mui.Paper;
+import Dialog from "material-ui/Dialog";
+import Input from "material-ui/TextField";
+import Paper from "material-ui/Paper";
+import FlatButton from "material-ui/FlatButton";
 
-var Note = require("./note");
-var NoteList = require("./notelist");
+import Note from "./note";
+import NoteList from "./notelist";
 
 /**
  * The Board component does the following:
@@ -19,60 +18,79 @@ var NoteList = require("./notelist");
  * 2. Allows you to add new notes by double clicking and displaying a dialog.
  * 3. Stores all of the notes and renders them
  */
-var Board = React.createClass({
+const Board = React.createClass({
 
   mixins: [FluxMixin, StoreWatchMixin("NotesStore")],
 
-  addNote: function() {
+  addNote() {
     this.getFlux().actions.notes.addNote(
         this.state.addNoteX - 100,
         this.state.addNoteY - 75,
         this.state.addTitle,
         this.state.addContent);
 
-
-    //Dismiss the dialog
-    this.refs.addNoteDialog.dismiss();
+    this.setState({
+      showDialog: false
+    });
   },
 
-  showNoteDialog: function(e) {
+  handleClose() {
+    this.setState({
+      showDialog: false
+    })
+  },
+
+  showNoteDialog(e) {
     //Capture the current x/y coordinates of the mouse click
     this.setState({
       addNoteX: e.clientX,
-      addNoteY: e.clientY
+      addNoteY: e.clientY,
+      showDialog: true
     });
-
-    //Use a ref variable to display the note dialog
-    this.refs.addNoteDialog.show();
   },
 
-  setTitle: function(e, value) {
+  setTitle(e, value) {
     //Capture the new note dialog title
     this.setState({
       addTitle: value
     });
   },
 
-  setContent: function(e, value) {
+  setContent(e, value) {
     //Capture the new note dialog content
     this.setState({
       addContent: value
     })
   },
 
-  getStateFromFlux: function() {
+  getStateFromFlux() {
     return this.getFlux().store("NotesStore").getState();
   },
 
-  render: function() {
-    var noteDivs = null;
-    var noteDialog = null;
-    var noteList = null;
+  getInitialState() {
+    return {
+      showDialog: false
+    }
+  },
+
+  render() {
+    let noteDivs = null;
+    let noteDialog = null;
+    let noteList = null;
 
     //Dialog actions
-    var actions = [
-      { text: "Cancel" },
-      { text: "Add Note", onClick: this.addNote }
+    //Dialog actions
+    const actions = [
+      <FlatButton
+        label="Cancel"
+        primary={true}
+        onClick={this.handleClose}
+      />,
+      <FlatButton
+        label="Add Note"
+        primary={true}
+        onClick={this.addNote}
+      />,
     ];
 
     //If we do not have any notes, then prompt the user
@@ -96,7 +114,7 @@ var Board = React.createClass({
         {noteList}
         {noteDivs}
 
-        <Dialog ref="addNoteDialog" title="Add Note" actions={actions}>
+        <Dialog ref="addNoteDialog" title="Add Note" actions={actions} open={this.state.showDialog}>
           <Input required={true} placeholder="Title" name="note-title" onChange={this.setTitle}/>
           <Input required={true} placeholder="Notes" name="note-content" onChange={this.setContent}/>
         </Dialog>

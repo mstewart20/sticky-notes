@@ -1,10 +1,12 @@
-/** @jsx React.DOM */
-var React = require("react");
-var mui = require("material-ui");
-var Dialog = mui.Dialog;
-var Input = mui.Input;
+import React from "react";
+import Dialog from "material-ui/Dialog";
+import Input from "material-ui/TextField";
+import FlatButton from "material-ui/FlatButton";
 
-var Note = require("./note");
+import Note from "./note";
+
+//Define some colors for our notes
+const COLORS = ["#FCF997", "#96FFA0", "#9BF8FF", "#FFC1C5"];
 
 /**
  * The Board component does the following:
@@ -13,18 +15,24 @@ var Note = require("./note");
  * 2. Allows you to add new notes by double clicking and displaying a dialog.
  * 3. Stores all of the notes and renders them
  */
-var Board = React.createClass({
+const Board = React.createClass({
 
-  getRandomColor: function() {
-    var colors = ["yellow", "green", "blue", "pink"];
-    return colors[Math.floor(Math.random() * 4)];
+  getRandomColor() {
+    return COLORS[Math.floor(Math.random() * 4)];
   },
 
-  addNote: function() {
-    var color = this.getRandomColor();
+  handleClose() {
+    //Set the state to the new notes array, triggering re-render
+    this.setState({
+      showDialog: false
+    });
+  },
+
+  addNote() {
+    const color = this.getRandomColor();
 
     //Create a note and add it to the notes Array
-    var notes = this.state.notes;
+    const { notes } = this.state;
 
     notes.push({
       id: this.state.nextNoteId,
@@ -38,32 +46,28 @@ var Board = React.createClass({
     //Set the state to the new notes array, triggering re-render
     this.setState({
       notes: notes,
-      nextNoteId: this.state.nextNoteId + 1
+      nextNoteId: this.state.nextNoteId + 1,
+      showDialog: false
     });
-
-    //Dismiss the dialog
-    this.refs.addNoteDialog.dismiss();
   },
 
 
-  showNoteDialog: function(e) {
+  showNoteDialog(e) {
     //Capture the current x/y coordinates of the mouse click
     this.setState({
       addNoteX: e.clientX,
-      addNoteY: e.clientY
+      addNoteY: e.clientY,
+      showDialog: true
     });
-
-    //Use a ref variable to display the note dialog
-    this.refs.addNoteDialog.show();
   },
 
-  focusNote: function(noteId) {
+  focusNote(noteId) {
     //Called when a note is dragged, need to find and re-order the note
     //so it is rendered "on top" of other notes.
-    var index = -1;
+    let index = -1;
 
     //Find the note by ID
-    for( var i = 0; i < this.state.notes.length; i++ ) {
+    for (let i = 0; i < this.state.notes.length; i++) {
       var note = this.state.notes[i];
       if( note.id === noteId ) {
         index = i;
@@ -72,9 +76,9 @@ var Board = React.createClass({
 
     //Remove the note and add it to the end
     //HTML rendering will then render this last, i.e. "on top"
-    if( index >= 0 ) {
-      var notes = this.state.notes;
-      var note = notes.splice(index, 1);
+    if (index >= 0) {
+      const { notes } = this.state;
+      const note = notes.splice(index, 1);
 
       notes.push(note[0]);
 
@@ -84,36 +88,45 @@ var Board = React.createClass({
     }
   },
 
-  setTitle: function(e, value) {
+  setTitle(e, value) {
     //Capture the new note dialog title
     this.setState({
       addTitle: value
     });
   },
 
-  setContent: function(e, value) {
+  setContent(e, value) {
     //Capture the new note dialog content
     this.setState({
       addContent: value
     })
   },
 
-  getInitialState: function() {
+  getInitialState() {
     //Set the initial state to an empty array with a next node id of 0.
     return {
       notes: [],
-      nextNoteId: 0
+      nextNoteId: 0,
+      showDialog: false
     }
   },
 
-  render: function() {
-    var noteDivs = null;
-    var noteDialog = null;
+  render() {
+    let noteDivs = null;
+    let noteDialog = null;
 
     //Dialog actions
-    var actions = [
-      { text: "Cancel" },
-      { text: "Add Note", onClick: this.addNote }
+    const actions = [
+      <FlatButton
+        label="Cancel"
+        primary={true}
+        onClick={this.handleClose}
+      />,
+      <FlatButton
+        label="Add Note"
+        primary={true}
+        onClick={this.addNote}
+      />,
     ];
 
     //If we do not have any notes, then prompt the user
@@ -133,7 +146,7 @@ var Board = React.createClass({
       <div id="board" className="board" onDoubleClick={this.showNoteDialog}>
         {noteDivs}
 
-        <Dialog ref="addNoteDialog" title="Add Note" actions={actions}>
+        <Dialog ref="addNoteDialog" title="Add Note" actions={actions} open={this.state.showDialog}>
           <Input required={true} placeholder="Title" name="note-title" onChange={this.setTitle}/>
           <Input required={true} placeholder="Notes" name="note-content" onChange={this.setContent}/>
         </Dialog>

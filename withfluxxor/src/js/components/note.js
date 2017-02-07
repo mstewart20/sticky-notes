@@ -1,35 +1,34 @@
-/** @jsx React.DOM */
-var React = require("react");
-var Fluxxor = require("fluxxor");
-var FluxMixin = Fluxxor.FluxMixin(React);
+import React from "react";
+import ReactDOM from "react-dom";
+import Fluxxor from "fluxxor";
+const FluxMixin = Fluxxor.FluxMixin(React);
 
-var jQuery = require("jquery");
-var mui = require("material-ui");
-var Paper = mui.Paper;
+import jQuery from "jquery";
+import Paper from "material-ui/Paper";
 
 /**
  * The Note components displays a note object which contains a title, content and a color. This
  * component is also responsible for positioning a note within the board. Positioning is done by
  * listening to mouse down, move and up events and simulating a drag command.
  */
-var Note = React.createClass({
+const Note = React.createClass({
   mixins: [FluxMixin],
 
-  startDrag: function(e) {
+  startDrag(e) {
 
     //Get the position of the mouse based on the parent container.
-    var pos = jQuery(this.getDOMNode()).position();
+    var pos = jQuery(ReactDOM.findDOMNode(this)).position();
 
     //Tell the note to start dragging.
     this.getFlux().actions.notes.startNoteDrag(this.props.note.id, e.clientX - pos.left, e.clientY - pos.top);
 
   },
 
-  stopDrag: function(e) {
+  stopDrag(e) {
     this.getFlux().actions.notes.stopNoteDrag(this.props.note.id);
   },
 
-  drag: function(e) {
+  drag(e) {
     if( !this.props.note.dragging) return;
 
     this.getFlux().actions.notes.moveNote(this.props.note.id, e.clientX, e.clientY)
@@ -39,7 +38,7 @@ var Note = React.createClass({
   },
 
 
-  componentDidUpdate: function(props, state) {
+  componentDidUpdate(props, state) {
     //Trigger addition/removal of event listeners when dragging state is changed.
     //This avoids multiple notes from listening to events they shouldn't be aware of.
     if (this.props.note.dragging && !props.note.dragging) {
@@ -51,11 +50,13 @@ var Note = React.createClass({
     }
   },
 
-  render: function() {
+  render() {
     //Assign position using inline CSS styles
     var positions = {
       top: this.props.note.y,
-      left: this.props.note.x
+      left: this.props.note.x,
+      backgroundColor: this.props.note.color,
+      transition: "initial",
     };
 
     //If we are dragging, bring everything to the "top" with z index and rotate the card for

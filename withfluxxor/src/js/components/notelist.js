@@ -1,24 +1,22 @@
-/** @jsx React.DOM */
-var React = require("react");
-var Fluxxor = require("fluxxor");
-var FluxMixin = Fluxxor.FluxMixin(React);
+import React from "react";
+import Fluxxor from "fluxxor";
+const FluxMixin = Fluxxor.FluxMixin(React);
 
-var mui = require("material-ui");
-var Paper = mui.Paper;
+import Paper from "material-ui/Paper";
 
-var NoteItem = React.createClass({
+const NoteItem = React.createClass({
 
   mixins: [FluxMixin],
 
-  onMouseEnter: function() {
+  onMouseEnter() {
     this.getFlux().actions.notes.highlightNote(this.props.note.id);
   },
 
-  onMouseLeave: function() {
+  onMouseLeave() {
     this.getFlux().actions.notes.unhighlightNote(this.props.note.id);
   },
 
-  render: function() {
+  render() {
     return (
       <div className="noteitem" onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
         <div className="noteitem-title">{this.props.note.title}</div>
@@ -32,7 +30,7 @@ var NoteItem = React.createClass({
 var NoteList = React.createClass({
   mixins: [FluxMixin],
 
-  render: function() {
+  render() {
 
     var noteItems = this.props.notes.map(function(note) {
       return <NoteItem key={note.id} note={note}/>

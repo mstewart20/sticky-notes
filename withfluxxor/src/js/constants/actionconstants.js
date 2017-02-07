@@ -1,4 +1,4 @@
-var ActionConstants = {
+const ActionConstants = {
 
   ADD_NOTE: "ADD_NOTE",
   START_NOTE_DRAG: "START_NOTE_DRAG",
